@@ -1,0 +1,3 @@
+[submodule "mdict-py"]
+	path = mdict-py
+	url = https://github.com/zhimoe/mdict-py
