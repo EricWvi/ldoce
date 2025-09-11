@@ -1,0 +1,30 @@
+[project]
+name = "myapp"
+version = "1.0.0"
+description = "Custom MDX/MDD word lookup server"
+authors = [{ name = "custom" }]
+dependencies = [
+    "litestar==2.8.0",
+    "pydantic==2.6.4",
+    "uvicorn",
+    "jinja2==3.1.3",
+]
+requires-python = ">=3.12"
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio",
+]
+
+[tool.pyright]
+pythonVersion = "3.12"
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+fixable = ["ALL"]
+unfixable = ["B"]
