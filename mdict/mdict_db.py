@@ -321,3 +321,57 @@ class MdictDb(object):
         conn.close()
         mdx_file.close()
         return lookup_result_list
+
+    def get_mdd_by_index(self, fmdx, index):
+        fmdx.seek(index["file_pos"])
+        record_block_compressed = fmdx.read(index["compressed_size"])
+        record_block_type = record_block_compressed[:4]
+        record_block_type = index["record_block_type"]
+        decompressed_size = index["decompressed_size"]
+        # adler32 = unpack('>I', record_block_compressed[4:8])[0]
+        if record_block_type == 0:
+            _record_block = record_block_compressed[8:]
+            # lzo compression
+        elif record_block_type == 1:
+            if lzo is None:
+                print("LZO compression is not supported")
+                # decompress
+            header = b"\xf0" + pack(">I", index["decompressed_size"])
+            _record_block = lzo.decompress(
+                record_block_compressed[8:],
+                initSize=decompressed_size,
+                blockSize=1308672,
+            )
+            # zlib compression
+        elif record_block_type == 2:
+            # decompress
+            _record_block = zlib.decompress(record_block_compressed[8:])
+        data = _record_block[
+            index["record_start"] - index["offset"] : index["record_end"]
+            - index["offset"]
+        ]
+        return data
+
+    def mdd_lookup(self, keyword):
+        if not hasattr(self, '_mdd_db') or not self._mdd_db or not os.path.isfile(self._mdd_db):
+            return []
+        conn = sqlite3.connect(self._mdd_db)
+        cursor = conn.execute(
+            "SELECT * FROM MDX_INDEX WHERE key_text = " + '"' + keyword + '"'
+        )
+        lookup_result_list = []
+        mdd_file = open(self._mdd_file, "rb")
+        for result in cursor:
+            index = {
+                "file_pos": result[1],
+                "compressed_size": result[2],
+                "decompressed_size": result[3],
+                "record_block_type": result[4],
+                "record_start": result[5],
+                "record_end": result[6],
+                "offset": result[7],
+            }
+            lookup_result_list.append(self.get_mdd_by_index(mdd_file, index))
+        mdd_file.close()
+        conn.close()
+        return lookup_result_list
