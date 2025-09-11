@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from litestar import Litestar, get, post
+from litestar import Litestar, get
 from litestar.response import Response, File
 from mdict.mdict_db import MdictDb
 from word_utils import enhanced_word_lookup
@@ -8,7 +8,7 @@ import sys
 
 
 # Path to the LDOCE dictionary
-LDOCE_PATH = "./static/LongmanDictionaryOfContemporaryEnglish6thEnEn.mdx"
+LDOCE_PATH = "./dict/LongmanDictionaryOfContemporaryEnglish6thEnEn.mdx"
 
 # Global database instance
 mdict_db_instance: Optional[MdictDb] = None
@@ -19,7 +19,7 @@ HTML_WRAPPER = '''<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dictionary - {word}</title>
+    <title>LDOCE - {word}</title>
     <script>
         function playAudio(element, audioUrl) {{
             // Check if audio element already exists
@@ -71,12 +71,6 @@ async def shutdown_handler() -> None:
 async def health_check() -> Dict[str, str]:
     return {"status": "healthy"}
 
-
-@post(path="/query")
-async def query_word(data: Dict[str, str]) -> str:
-    word = data["word"]
-    # TODO: Implement MDX/MDD word lookup functionality
-    return f"Definition for '{word}' not implemented yet"
 
 
 def rewrite_resource_urls(html_content: str) -> str:
@@ -198,7 +192,7 @@ async def serve_image_files(filename: str) -> Response:
 
 
 app = Litestar(
-    route_handlers=[health_check, query_word, get_word_definition, serve_static_files, serve_sound_files, serve_image_files],
+    route_handlers=[health_check, get_word_definition, serve_static_files, serve_sound_files, serve_image_files],
     on_startup=[startup_handler],
     on_shutdown=[shutdown_handler],
 )

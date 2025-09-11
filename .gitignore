@@ -102,4 +102,4 @@ data/**
 
 *.db
 
-static
+dict
