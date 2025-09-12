@@ -43,6 +43,9 @@ HTML_WRAPPER = '''<!DOCTYPE html>
     </script>
 </head>
 <body>
+    <div class="header">
+        <img src="/static/ldoce-logo.svg" alt="LDOCE Logo" style="height:40px; vertical-align: middle;">
+    </div>
     <div class="dictionary-entry">
         {content}
     </div>
@@ -91,7 +94,8 @@ def rewrite_resource_urls(html_content: str) -> str:
     
     return (html_content
             .replace('src="img/', 'src="/api/img/')
-            .replace('entry://#', '#')
+            # .replace('entry://#', '#')
+            .replace('href="/#', 'href="#')
             .replace('href="LongmanDictionaryOfContemporaryEnglish6thEnEn.css"', 'href="/static/LongmanDictionaryOfContemporaryEnglish6thEnEn.css"')
             .replace('src="LongmanDictionaryOfContemporaryEnglish6thEnEn.js"', 'src="/static/LongmanDictionaryOfContemporaryEnglish6thEnEn.js"'))
 
@@ -120,6 +124,15 @@ async def get_word_definition(word: str) -> Response:
         return Response(content=html, media_type="text/html", status_code=500)
 
 
+@get(path="/favicon.ico")
+async def serve_favicon() -> File:
+    """Serve favicon.ico from static directory"""
+    file_path = "./static/favicon.ico"
+    if not os.path.exists(file_path):
+        raise ValueError("Favicon not found")
+    return File(path=file_path, media_type="image/x-icon")
+
+
 @get(path="/static/{filename:str}")
 async def serve_static_files(filename: str) -> File:
     """Serve CSS and JS files from static directory"""
@@ -132,6 +145,8 @@ async def serve_static_files(filename: str) -> File:
         media_type = "text/css"
     elif filename.endswith('.js'):
         media_type = "application/javascript"
+    elif filename.endswith('.svg'):
+        media_type = "image/svg+xml"
     else:
         media_type = "application/octet-stream"
     
@@ -192,7 +207,7 @@ async def serve_image_files(filename: str) -> Response:
 
 
 app = Litestar(
-    route_handlers=[health_check, get_word_definition, serve_static_files, serve_sound_files, serve_image_files],
+    route_handlers=[health_check, get_word_definition, serve_favicon, serve_static_files, serve_sound_files, serve_image_files],
     on_startup=[startup_handler],
     on_shutdown=[shutdown_handler],
 )
