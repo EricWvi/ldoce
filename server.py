@@ -95,7 +95,7 @@ def rewrite_resource_urls(html_content: str) -> str:
     return (html_content
             .replace('src="img/', 'src="/api/img/')
             # .replace('entry://#', '#')
-            .replace('href="/#', 'href="#')
+            .replace('href="/', 'href="')
             .replace('href="LongmanDictionaryOfContemporaryEnglish6thEnEn.css"', 'href="/static/LongmanDictionaryOfContemporaryEnglish6thEnEn.css"')
             .replace('src="LongmanDictionaryOfContemporaryEnglish6thEnEn.js"', 'src="/static/LongmanDictionaryOfContemporaryEnglish6thEnEn.js"'))
 
