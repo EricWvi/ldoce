@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Longman Dictionary Lookup",
+  "version": "1.0",
+  "description": "Look up selected words in Longman Dictionary via context menu",
+  "permissions": [
+    "contextMenus",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "host_permissions": [
+    "https://ldoce.onlyquant.top/*"
+  ]
+}
