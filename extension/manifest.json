@@ -5,7 +5,8 @@
   "description": "Look up selected words in Longman Dictionary via context menu",
   "permissions": [
     "contextMenus",
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"
@@ -16,7 +17,8 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
+  "options_page": "options.html",
   "host_permissions": [
-    "https://ldoce.onlyquant.top/*"
+    "https://www.ldoceonline.com/dictionary/*"
   ]
 }
